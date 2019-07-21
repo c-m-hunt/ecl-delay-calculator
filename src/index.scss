@@ -1,0 +1,61 @@
+$hudl-orange: #FF6300;
+
+%content-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+%content-box {
+  border: 3px solid $hudl-orange;
+  background-color: $hudl-orange;
+  color: white;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+hr {
+  width: 100%;
+}
+
+h2,
+h3 {
+  margin: 0.5rem;
+}
+
+a {
+  color: black;
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 1rem;
+  max-width: 800px !important;
+
+  >div {
+    width: 100%;
+  }
+}
+
+header {
+  text-align: center;
+
+  .logo {
+    height: 100px;
+  }
+
+  margin-bottom: 1rem;
+}

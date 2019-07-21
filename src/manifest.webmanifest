@@ -1,0 +1,10 @@
+{
+  "background_color": "#FF6300",
+  "theme_color": "#FF6300",
+  "description": "Application to calculate rain affected matches",
+  "display": "fullscreen",
+  "name": "Essex Cricket League Rain Calculator",
+  "short_name": "Rain Calculator",
+  "start_url": "/",
+  "orientation": "portrait"
+}
