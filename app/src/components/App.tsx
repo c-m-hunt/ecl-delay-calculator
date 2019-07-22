@@ -13,13 +13,14 @@ type DelayWhen = 'before' | 'first' | 'second'
 
 interface State {
   delayWhen: DelayWhen | null
-  timeLost: number
+  timeLost: number | null
   recalcResponse: RecalcResponse | null
   teaTaken: boolean
-  firstInningsRuns: number
-  oversCompleted: number
-  oversTarget: number
+  firstInningsRuns: number | null
+  oversCompleted: number | null
+  oversTarget: number | null
   abandonMessage: string | null
+  errorMessage: string | null
 }
 
 class App extends React.PureComponent<Props, State> {
@@ -34,6 +35,7 @@ class App extends React.PureComponent<Props, State> {
       oversCompleted: config.startingOvers,
       oversTarget: config.startingOvers,
       abandonMessage: null,
+      errorMessage: null,
     }
   }
 
@@ -46,19 +48,29 @@ class App extends React.PureComponent<Props, State> {
       oversCompleted: config.startingOvers,
       oversTarget: config.startingOvers,
       abandonMessage: null,
+      errorMessage: null
     })
   }
 
   calculateDelayBeforeMatchStart = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    const recalcResult = matchStartLate(
-      this.state.timeLost,
-      this.state.teaTaken
-    )
-    this.setState({
-      recalcResponse: recalcResult,
-      abandonMessage: null,
-    })
+    const { timeLost, teaTaken } = this.state
+    if (timeLost) {
+      const recalcResult = matchStartLate(
+        timeLost,
+        teaTaken
+      )
+      this.setState({
+        recalcResponse: recalcResult,
+        abandonMessage: null,
+        errorMessage: null
+      })
+    } else {
+      this.setState({
+        errorMessage: 'Ensure that you have entered a value for time lost',
+        recalcResponse: null
+      })
+    }
   }
 
   calculateDelayDuringFirstInnings = (
@@ -73,23 +85,41 @@ class App extends React.PureComponent<Props, State> {
       oversTarget,
     } = this.state
     try {
-      const recalcResult = firstInningsTimeLost(
-        firstInningsRuns,
-        oversCompleted,
-        timeLost,
-        teaTaken,
-        oversTarget
-      )
-      console.log(recalcResult)
-      this.setState({
-        recalcResponse: recalcResult,
-        abandonMessage: null,
-      })
+      if (firstInningsRuns && oversCompleted && timeLost && oversTarget) {
+        const recalcResult = firstInningsTimeLost(
+          firstInningsRuns,
+          oversCompleted,
+          timeLost,
+          teaTaken,
+          oversTarget
+        )
+        console.log(recalcResult)
+        this.setState({
+          recalcResponse: recalcResult,
+          abandonMessage: null,
+          errorMessage: null
+        })
+      } else {
+        this.setState({
+          errorMessage: `Ensure you've entered a first innings total, overs completed, overs target and time lost`,
+          recalcResponse: null,
+        })
+      }
     } catch (err) {
       this.setState({
         abandonMessage: err.message,
+        errorMessage: null,
+        recalcResponse: null,
       })
     }
+  }
+
+  tidyNumber = (value: string) => {
+    let retVal: number | null = null;
+    if (Number(value) !== NaN) {
+      retVal = parseInt(value, 10)
+    }
+    return retVal;
   }
 
   renderStandardFormElements = () => {
@@ -100,9 +130,9 @@ class App extends React.PureComponent<Props, State> {
           <label htmlFor="timeLost">Time lost (minutes):</label>
           <input
             type="number"
-            value={timeLost}
+            value={timeLost || ""}
             onChange={e => {
-              this.setState({ timeLost: parseInt(e.currentTarget.value, 10) })
+              this.setState({ timeLost: this.tidyNumber(e.currentTarget.value) })
             }}
             className="form-control"
             id="timeLost"
@@ -165,16 +195,16 @@ class App extends React.PureComponent<Props, State> {
               <label htmlFor="firstInningsRuns">1st innings runs scored:</label>
               <input
                 type="number"
-                value={firstInningsRuns || 0}
+                value={firstInningsRuns || ""}
                 onChange={e => {
                   this.setState({
-                    firstInningsRuns: parseInt(e.currentTarget.value, 10),
+                    firstInningsRuns: this.tidyNumber(e.currentTarget.value),
                   })
                 }}
                 className="form-control"
                 id="firstInningsRuns"
                 aria-describedby="firstInningsRunsHelp"
-                placeholder="Time lost in minutes"
+                placeholder="1st innings runs scored"
               />
               <small id="firstInningsRunsHelp" className="form-text text-muted">
                 Enter the runs scored at the end of first innings
@@ -187,10 +217,10 @@ class App extends React.PureComponent<Props, State> {
               </label>
               <input
                 type="number"
-                value={oversCompleted || 0}
+                value={oversCompleted || ""}
                 onChange={e => {
                   this.setState({
-                    oversCompleted: parseInt(e.currentTarget.value, 10),
+                    oversCompleted: this.tidyNumber(e.currentTarget.value),
                   })
                 }}
                 className="form-control"
@@ -209,10 +239,10 @@ class App extends React.PureComponent<Props, State> {
               <label htmlFor="oversTarget">Overs target:</label>
               <input
                 type="number"
-                value={oversTarget || 0}
+                value={oversTarget || ""}
                 onChange={e => {
                   this.setState({
-                    oversTarget: parseInt(e.currentTarget.value, 10),
+                    oversTarget: this.tidyNumber(e.currentTarget.value),
                   })
                 }}
                 className="form-control"
@@ -275,7 +305,7 @@ class App extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { delayWhen, recalcResponse, abandonMessage } = this.state
+    const { delayWhen, recalcResponse, abandonMessage, errorMessage } = this.state
     return (
       <div className="container" data-testid="toggle-container">
         <h1>Essex Cricket League Delay Calculator</h1>
@@ -319,6 +349,12 @@ class App extends React.PureComponent<Props, State> {
           {delayWhen === 'second' && this.renderSecond()}
           {abandonMessage !== null && this.renderAbandon()}
         </div>
+
+        {errorMessage && <div className='card bg-danger text-white'>
+          <div className='card-body'>
+            {errorMessage}
+          </div>
+        </div>}
 
         {recalcResponse && <Response recalcResponse={recalcResponse} />}
       </div>
