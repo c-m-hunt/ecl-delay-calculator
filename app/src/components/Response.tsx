@@ -38,9 +38,9 @@ const Response: React.FunctionComponent<Props> = (props: Props) => {
           <dt>Max per bowler:</dt>
           <dd>
             {`${recalcResponse.maxPerBowler} overs`}
-            {maxPlusOneBowlers &&
+            {maxPlusOneBowlers ?
               ` with up to ${maxPlusOneBowlers} able to bowl ${recalcResponse.maxPerBowler +
-              1} overs`}
+              1} overs` : ''}
           </dd>
 
           <dt>Fielding restrictions:</dt>
