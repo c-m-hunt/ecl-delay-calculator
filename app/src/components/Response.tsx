@@ -13,7 +13,7 @@ const Response: React.FunctionComponent<Props> = (props: Props) => {
   const maxPlusOneBowlers: number =
     recalcResponse.overs % recalcResponse.maxPerBowler
   return (
-    <div className="card  bg-dark text-white">
+    <div className="card bg-dark text-white response">
       <div className="card-header">
         <h3>Recalculated playing conditions</h3>
       </div>
@@ -40,7 +40,7 @@ const Response: React.FunctionComponent<Props> = (props: Props) => {
             {`${recalcResponse.maxPerBowler} overs`}
             {maxPlusOneBowlers &&
               ` with up to ${maxPlusOneBowlers} able to bowl ${recalcResponse.maxPerBowler +
-                1} overs`}
+              1} overs`}
           </dd>
 
           <dt>Fielding restrictions:</dt>

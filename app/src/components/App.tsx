@@ -7,7 +7,7 @@ import {
 } from '../lib/calc'
 import Response from './Response'
 
-interface Props {}
+interface Props { }
 
 type DelayWhen = 'before' | 'first' | 'second'
 
@@ -278,7 +278,7 @@ class App extends React.PureComponent<Props, State> {
     const { delayWhen, recalcResponse, abandonMessage } = this.state
     return (
       <div className="container" data-testid="toggle-container">
-        <h1>Essex Cricket League Rain Calculator</h1>
+        <h1>Essex Cricket League Delay Calculator</h1>
         <div className="card">
           <div className="card-body">
             <p>When was the delay?</p>

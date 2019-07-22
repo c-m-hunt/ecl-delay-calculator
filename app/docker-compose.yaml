@@ -1,0 +1,16 @@
+version: '2'
+services:
+  web1:
+    image: 811771737115.dkr.ecr.eu-west-1.amazonaws.com/chris-hunt
+    environment:
+      AUTH_KEY: aadkfjha834iohdf9qopc81p28
+      LETSENCRYPT_EMAIL: chris.hunt1977@gmail.com
+      LETSENCRYPT_HOST: www.chris-hunt.net,chris-hunt.net
+      VIRTUAL_HOST: www.chris-hunt.net,chris-hunt.net
+      VIRTUAL_PORT: '3000'
+    command:
+    - node
+    - index.js
+    - -s
+    labels:
+      io.rancher.container.pull_image: always
