@@ -55,20 +55,28 @@ class App extends React.PureComponent<Props, State> {
   calculateDelayBeforeMatchStart = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
     const { timeLost, teaTaken } = this.state
-    if (timeLost) {
-      const recalcResult = matchStartLate(
-        timeLost,
-        teaTaken
-      )
+    try {
+      if (timeLost) {
+        const recalcResult = matchStartLate(
+          timeLost,
+          teaTaken
+        )
+        this.setState({
+          recalcResponse: recalcResult,
+          abandonMessage: null,
+          errorMessage: null
+        })
+      } else {
+        this.setState({
+          errorMessage: 'Ensure that you have entered a value for time lost',
+          recalcResponse: null
+        })
+      }
+    } catch (err) {
       this.setState({
-        recalcResponse: recalcResult,
-        abandonMessage: null,
-        errorMessage: null
-      })
-    } else {
-      this.setState({
-        errorMessage: 'Ensure that you have entered a value for time lost',
-        recalcResponse: null
+        abandonMessage: err.message,
+        errorMessage: null,
+        recalcResponse: null,
       })
     }
   }
@@ -273,7 +281,7 @@ class App extends React.PureComponent<Props, State> {
   renderAbandon = () => {
     const { abandonMessage } = this.state
     return (
-      <div className="card">
+      <div className="card bg-danger text-white">
         <div className="card-header">
           <h3>Abandon Match</h3>
         </div>
