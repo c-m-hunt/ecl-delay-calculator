@@ -4,6 +4,10 @@ WORKDIR /usr/src/app
 
 COPY app ./
 
-RUN npm install
+RUN npm install -g serve yarn && yarn install
 
-CMD npm start
+RUN yarn build
+
+WORKDIR /usr/src/app/dist
+
+CMD serve -l 1234
