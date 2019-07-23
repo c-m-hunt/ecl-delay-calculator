@@ -317,6 +317,7 @@ class App extends React.PureComponent<Props, State> {
     return (
       <div className="container" data-testid="toggle-container">
         <h1>Essex Cricket League Delay Calculator</h1>
+        <p>To be used for 2nd XI matches for 2019 season where there is a delay in play.</p>
         <div className="card">
           <div className="card-body">
             <p>When was the delay?</p>

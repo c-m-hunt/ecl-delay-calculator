@@ -44,7 +44,7 @@ const Response: React.FunctionComponent<Props> = (props: Props) => {
           </dd>
 
           <dt>Fielding restrictions:</dt>
-          <dd>{recalcResponse.powerPlay}</dd>
+          <dd>{recalcResponse.powerPlay} overs</dd>
         </dl>
       </div>
     </div>
