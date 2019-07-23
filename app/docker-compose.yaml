@@ -4,8 +4,8 @@ services:
     image: 811771737115.dkr.ecr.eu-west-1.amazonaws.com/snel-delay-calculator
     environment:
       LETSENCRYPT_EMAIL: chris.hunt1977@gmail.com
-      LETSENCRYPT_HOST: delay.sosemtcc.org.uk
-      VIRTUAL_HOST: delay.sosemtcc.org.uk
+      LETSENCRYPT_HOST: delay.sosemtcc.org.uk,raindelay.essexcricket.com
+      VIRTUAL_HOST: delay.sosemtcc.org.uk,raindelay.essexcricket.com
       VIRTUAL_PORT: '1234'
     labels:
       io.rancher.container.pull_image: always
