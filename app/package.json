@@ -1,7 +1,7 @@
 {
-  "name": "ecl-rain-app",
+  "name": "ecl-delay-calculator",
   "version": "1.0.0",
-  "description": "Personalised scheduler for BitsConf 2019",
+  "description": "Application for playing condition recalculation after delay",
   "repository": {
     "type": "git",
     "url": "https://github.com/c-m-hunt/ecl-rain-app"
@@ -11,7 +11,7 @@
   "scripts": {
     "develop": "concurrently -r \"npm:type-check:watch\" \"npm:start\"",
     "start": "parcel ./src/index.html",
-    "build": "rm -rf dist && npm run type-check && parcel build ./src/index.html --public-url '/'",
+    "build": "rm -rf dist && parcel build ./src/index.html --public-url '/'",
     "prettify": "prettier --write './src/**/*.{ts,tsx}'",
     "test": "jest --config jestconfig.json",
     "test:watch": "jest --watchAll --config jestconfig.json",
