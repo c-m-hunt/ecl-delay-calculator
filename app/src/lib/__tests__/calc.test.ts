@@ -1,4 +1,4 @@
-import { firstInningsTimeLost, matchStartLate } from '../calc'
+import { firstInningsTimeLost, matchStartLate, secondInningsTimeLost } from '../calc'
 
 describe('Rain rules', () => {
   describe('2nd XI', () => {
@@ -81,6 +81,44 @@ describe('Rain rules', () => {
           firstInningsTimeLost(203, 41.1, 310, true, 45)
         }).toThrowError()
       })
+    })
+
+    describe('time lost during the 2nd innings', () => {
+      it('calculates target when delay in 2nd innings', () => {
+        expect(secondInningsTimeLost(43, 45, 3.4)).toEqual({
+          target: 140,
+          overs: 41,
+          maxPerBowler: 8,
+          powerPlay: 12,
+          targetRunRate: 3.4,
+          targetExact: false
+        })
+
+        expect(secondInningsTimeLost(120, 45, 5.0)).toEqual({
+          target: 111,
+          overs: 22,
+          maxPerBowler: 4,
+          powerPlay: 6,
+          targetRunRate: 5.0,
+          targetExact: true
+        })
+
+        expect(secondInningsTimeLost(120, 45, 5.01)).toEqual({
+          target: 111,
+          overs: 22,
+          maxPerBowler: 4,
+          powerPlay: 6,
+          targetRunRate: 5.01,
+          targetExact: false
+        })
+      })
+
+      it('throws an exception when not enough overs left to complete game', () => {
+        expect(() => {
+          secondInningsTimeLost(43, 22, 3.4)
+        }).toThrowError()
+      })
+
     })
   })
 })

@@ -15,30 +15,8 @@ export const config = {
   minOversCutoff: 20,
 }
 
-export const matchStartLate = (
-  minutesLost: number,
-  teaTaken: boolean = false
-): Response => {
-  let minutesLostIncTea = teaTaken
-    ? minutesLost - config.teaLength
-    : minutesLost
-  minutesLostIncTea = minutesLostIncTea - config.freeTime
-  let overs = config.startingOvers
-  if (minutesLostIncTea > 0) {
-    overs =
-      config.startingOvers -
-      Math.ceil(minutesLostIncTea / (config.overMinutes * 2))
-  }
-
-  if (overs < config.minOversCutoff) {
-    throw Error('Less than 20 overs available - ABANDON GAME')
-  }
-
-  return {
-    overs,
-    maxPerBowler: Math.floor(overs / 5),
-    powerPlay: calculatePowerPlay(overs),
-  }
+const messages = {
+  notEnoughOvers: 'Less than 20 overs available - ABANDON GAME'
 }
 
 const calculatePowerPlay = (overs: number) => {
@@ -59,6 +37,32 @@ const calculatePowerPlay = (overs: number) => {
     powerPlay = 12
   }
   return powerPlay
+}
+
+export const matchStartLate = (
+  minutesLost: number,
+  teaTaken: boolean = false
+): Response => {
+  let minutesLostIncTea = teaTaken
+    ? minutesLost - config.teaLength
+    : minutesLost
+  minutesLostIncTea = minutesLostIncTea - config.freeTime
+  let overs = config.startingOvers
+  if (minutesLostIncTea > 0) {
+    overs =
+      config.startingOvers -
+      Math.ceil(minutesLostIncTea / (config.overMinutes * 2))
+  }
+
+  if (overs < config.minOversCutoff) {
+    throw Error(messages.notEnoughOvers)
+  }
+
+  return {
+    overs,
+    maxPerBowler: Math.floor(overs / 5),
+    powerPlay: calculatePowerPlay(overs),
+  }
 }
 
 export const firstInningsTimeLost = (
@@ -85,11 +89,36 @@ export const firstInningsTimeLost = (
   const targetRunRate = ((100 + (oversTarget - overs) * 1.5) * runRate) / 100
 
   if (overs < config.minOversCutoff) {
-    throw Error('Less than 20 overs available - ABANDON GAME')
+    throw Error(messages.notEnoughOvers)
   }
 
   const target = targetRunRate * overs;
   const targetExact = target === Math.ceil(target);
+  return {
+    overs,
+    targetExact,
+    targetRunRate: parseFloat(targetRunRate.toFixed(2)),
+    maxPerBowler: Math.floor(overs / 5),
+    powerPlay: calculatePowerPlay(overs),
+    target: Math.ceil(target) + (targetExact ? 1 : 0),
+  }
+}
+
+
+export const secondInningsTimeLost = (
+  timeLost: number,
+  targetOvers: number,
+  targetRunRate: number
+): Response => {
+
+  const overs = targetOvers - (Math.ceil((timeLost - config.freeTime) / config.overMinutes))
+  const target = overs * targetRunRate
+  const targetExact = target === Math.ceil(target);
+
+  if (overs < config.minOversCutoff) {
+    throw Error(messages.notEnoughOvers)
+  }
+
   return {
     overs,
     targetExact,
