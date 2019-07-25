@@ -39,6 +39,11 @@ const calculatePowerPlay = (overs: number) => {
   return powerPlay
 }
 
+/**
+ *
+ * @param minutesLost Minutes lost before the start of the match
+ * @param teaTaken Whether tea was taken during the delay
+ */
 export const matchStartLate = (
   minutesLost: number,
   teaTaken: boolean = false
@@ -65,6 +70,14 @@ export const matchStartLate = (
   }
 }
 
+/**
+ * Calculate the new playing conditions for delay during 1st innings
+ * @param total Total runs scored in the 1st innings
+ * @param oversCompleted Overs completed at the end of the first innings
+ * @param minutesLost Time lost in minutes
+ * @param teaTaken Whether tea was taken during the delay
+ * @param oversTarget Scheduled amount of overs at the start of the first innings
+ */
 export const firstInningsTimeLost = (
   total: number,
   oversCompleted: number,
@@ -104,14 +117,18 @@ export const firstInningsTimeLost = (
   }
 }
 
-
+/**
+ * Calculate the new playing conditions for delay during 2nd innings
+ * @param minutesLost Time lost in minutes
+ * @param targetOvers Target overs before the delay in play
+ * @param targetRunRate Target run rate before the delay in play
+ */
 export const secondInningsTimeLost = (
-  timeLost: number,
+  minutesLost: number,
   targetOvers: number,
   targetRunRate: number
 ): Response => {
-
-  const overs = targetOvers - (Math.ceil((timeLost - config.freeTime) / config.overMinutes))
+  const overs = targetOvers - (Math.ceil((minutesLost - config.freeTime) / config.overMinutes))
   const target = overs * targetRunRate
   const targetExact = target === Math.ceil(target);
 
