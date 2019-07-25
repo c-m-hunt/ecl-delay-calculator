@@ -43,6 +43,8 @@ describe('Rain rules', () => {
           overs: 26,
           maxPerBowler: 5,
           powerPlay: 7,
+          targetRunRate: 5.8,
+          targetExact: false
         })
 
         expect(firstInningsTimeLost(213, 45, 135, true, 45)).toEqual({
@@ -50,21 +52,27 @@ describe('Rain rules', () => {
           overs: 23,
           maxPerBowler: 4,
           powerPlay: 6,
+          targetRunRate: 6.3,
+          targetExact: false
         })
       })
 
       it('returns correct values if not enough time has been lost', () => {
         expect(firstInningsTimeLost(203, 41.1, 39, true, 45)).toEqual({
-          target: 203,
+          target: 204,
           overs: 45,
           maxPerBowler: 9,
           powerPlay: 12,
+          targetRunRate: 4.51,
+          targetExact: true
         })
         expect(firstInningsTimeLost(203, 41.1, 21, false, 45)).toEqual({
-          target: 203,
+          target: 204,
           overs: 45,
           maxPerBowler: 9,
           powerPlay: 12,
+          targetRunRate: 4.51,
+          targetExact: true
         })
       })
 

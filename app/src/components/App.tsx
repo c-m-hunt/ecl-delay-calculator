@@ -130,7 +130,7 @@ class App extends React.PureComponent<Props, State> {
     return retVal;
   }
 
-  renderStandardFormElements = () => {
+  renderStandardFormElements = (timeLostMessage: string = '') => {
     const { timeLost, teaTaken } = this.state
     return (
       <React.Fragment>
@@ -148,7 +148,7 @@ class App extends React.PureComponent<Props, State> {
             placeholder="Time lost in minutes"
           />
           <small id="timeLostHelp" className="form-text text-muted">
-            Enter the amount of time in minutes lost
+            {`Enter the amount of time in minutes lost. ${timeLostMessage} `}
           </small>
         </div>
         <div className="form-check">
@@ -263,8 +263,7 @@ class App extends React.PureComponent<Props, State> {
                 game, this should be {config.startingOvers} overs
               </small>
             </div>
-
-            {this.renderStandardFormElements()}
+            {this.renderStandardFormElements('If time was lost before the start of the match, add up to 30 minutes to account for the free time (rule 4 ii.).')}
             <button
               type="submit"
               onClick={this.calculateDelayDuringFirstInnings}

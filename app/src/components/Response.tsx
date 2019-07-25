@@ -31,6 +31,26 @@ const Response: React.FunctionComponent<Props> = (props: Props) => {
               <dd>{recalcResponse.target}</dd>
             </React.Fragment>
           )}
+          {recalcResponse.targetExact !== undefined && recalcResponse.target &&
+            <div className="card text-white bg-info">
+              <div className="card-body">
+                <p className="card-text">
+                  Rule 9 iii. h.<br />
+                  {recalcResponse.targetExact ?
+                    `This is an EXACT target and the game is tied at ${recalcResponse.target - 1}` :
+                    `The target is a fraction and therefore there CANNOT be a TIE. The team batting second loses if they only score ${recalcResponse.target - 1}`
+                  }
+                </p>
+              </div>
+            </div>
+          }
+
+          {recalcResponse.targetRunRate &&
+            <React.Fragment>
+              <dt>2nd innings run rate:</dt>
+              <dd>{recalcResponse.targetRunRate}</dd>
+            </React.Fragment>
+          }
 
           <dt>Overs:</dt>
           <dd>{recalcResponse.overs}</dd>
@@ -45,6 +65,16 @@ const Response: React.FunctionComponent<Props> = (props: Props) => {
 
           <dt>Fielding restrictions:</dt>
           <dd>{recalcResponse.powerPlay} overs</dd>
+
+          {recalcResponse.targetRunRate &&
+            <div className="card text-white bg-info">
+              <div className="card-body">
+                <p className="card-text">
+                  Ensure you have noted down the 2nd innings run rate. This will be required if there are reductions of overs in the 2nd innings
+                </p>
+              </div>
+            </div>
+          }
         </dl>
       </div>
     </div>

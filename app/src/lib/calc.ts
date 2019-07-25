@@ -1,5 +1,7 @@
 export interface Response {
   target?: number
+  targetRunRate?: number
+  targetExact?: boolean
   overs: number
   maxPerBowler: number
   powerPlay: number
@@ -86,10 +88,14 @@ export const firstInningsTimeLost = (
     throw Error('Less than 20 overs available - ABANDON GAME')
   }
 
+  const target = targetRunRate * overs;
+  const targetExact = target === Math.ceil(target);
   return {
     overs,
+    targetExact,
+    targetRunRate: parseFloat(targetRunRate.toFixed(2)),
     maxPerBowler: Math.floor(overs / 5),
     powerPlay: calculatePowerPlay(overs),
-    target: Math.ceil(targetRunRate * overs),
+    target: Math.ceil(target) + (targetExact ? 1 : 0),
   }
 }
