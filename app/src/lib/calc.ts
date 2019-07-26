@@ -5,6 +5,13 @@ export interface Response {
   overs: number
   maxPerBowler: number
   powerPlay: number
+  breakType: BreakType
+}
+
+export enum BreakType {
+  BEFORE,
+  FIRST,
+  SECOND
 }
 
 export const config = {
@@ -67,6 +74,7 @@ export const matchStartLate = (
     overs,
     maxPerBowler: Math.floor(overs / 5),
     powerPlay: calculatePowerPlay(overs),
+    breakType: BreakType.BEFORE
   }
 }
 
@@ -114,6 +122,7 @@ export const firstInningsTimeLost = (
     maxPerBowler: Math.floor(overs / 5),
     powerPlay: calculatePowerPlay(overs),
     target: Math.ceil(target) + (targetExact ? 1 : 0),
+    breakType: BreakType.FIRST
   }
 }
 
@@ -143,5 +152,6 @@ export const secondInningsTimeLost = (
     maxPerBowler: Math.floor(overs / 5),
     powerPlay: calculatePowerPlay(overs),
     target: Math.ceil(target) + (targetExact ? 1 : 0),
+    breakType: BreakType.SECOND
   }
 }

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Response as RecalcResponse } from '../lib/calc'
+import { Response as RecalcResponse, BreakType } from '../lib/calc'
 
 interface Props {
   recalcResponse: RecalcResponse
@@ -66,11 +66,21 @@ const Response: React.FunctionComponent<Props> = (props: Props) => {
           <dt>Fielding restrictions:</dt>
           <dd>{recalcResponse.powerPlay} overs</dd>
 
-          {recalcResponse.targetRunRate &&
+          {recalcResponse.targetRunRate && recalcResponse.breakType === BreakType.FIRST &&
             <div className="card text-white bg-info">
               <div className="card-body">
                 <p className="card-text">
-                  Ensure you have noted down the 2nd innings run rate. This will be required if there are reductions of overs in the 2nd innings
+                  Ensure you have noted down the 2nd innings run rate. This will be required if there are reductions of overs in the 2nd innings.
+                </p>
+              </div>
+            </div>
+          }
+
+          {recalcResponse.targetRunRate && recalcResponse.breakType === BreakType.SECOND &&
+            <div className="card text-white bg-info">
+              <div className="card-body">
+                <p className="card-text">
+                  It's possible that some bowlers may have already exceeded the bowling quota. No further bowlers are allowed to exceed that quota.
                 </p>
               </div>
             </div>

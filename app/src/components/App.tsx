@@ -22,7 +22,7 @@ interface State {
   oversTarget: number | null
   abandonMessage: string | null
   errorMessage: string | null
-  targetRunRate: number | null
+  targetRunRate: string | null
 }
 
 class App extends React.PureComponent<Props, State> {
@@ -98,7 +98,7 @@ class App extends React.PureComponent<Props, State> {
         const recalcResult = secondInningsTimeLost(
           timeLost,
           oversTarget,
-          targetRunRate
+          parseFloat(targetRunRate)
         )
         console.log(recalcResult)
         this.setState({
@@ -238,6 +238,9 @@ class App extends React.PureComponent<Props, State> {
 
   renderFirst = () => {
     const { firstInningsRuns, oversCompleted, oversTarget } = this.state
+    const targetOversHelpMsg = `Enter the number of overs scheduled for first innings at the
+    start of the game. If there was no delay before the start of the
+      game, this should be {config.startingOvers} overs`
     return (
       <div className="card">
         <div className="card-header">
@@ -289,26 +292,7 @@ class App extends React.PureComponent<Props, State> {
               </small>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="oversTarget">Overs target:</label>
-              <input
-                type="number"
-                value={oversTarget || ""}
-                onChange={e => {
-                  this.setState({
-                    oversTarget: this.tidyNumber(e.currentTarget.value),
-                  })
-                }}
-                className="form-control"
-                id="oversTarget"
-                aria-describedby="oversTargetHelp"
-              />
-              <small id="oversTargetHelp" className="form-text text-muted">
-                Enter the number of overs scheduled for first innings at the
-                start of the game. If there was no delay before the start of the
-                game, this should be {config.startingOvers} overs
-              </small>
-            </div>
+            {this.renderTargetOvers(targetOversHelpMsg)}
             {this.renderTimeLost('If time was lost before the start of the match, add up to 30 minutes to account for the free time (rule 4 ii.).')}
             {this.renderTeaTaken()}
             <button
@@ -322,6 +306,51 @@ class App extends React.PureComponent<Props, State> {
         </div>
       </div>
     )
+  }
+
+  renderTargetOvers = (msg: string = '') => {
+    const { oversTarget } = this.state
+    return <div className="form-group">
+      <label htmlFor="oversTarget">Overs target:</label>
+      <input
+        type="number"
+        value={oversTarget || ""}
+        onChange={e => {
+          this.setState({
+            oversTarget: this.tidyNumber(e.currentTarget.value),
+          })
+        }}
+        className="form-control"
+        id="oversTarget"
+        aria-describedby="oversTargetHelp"
+      />
+      <small id="oversTargetHelp" className="form-text text-muted">
+        {msg}
+      </small>
+    </div>
+  }
+
+  renderTargetRunRate = () => {
+    const { targetRunRate } = this.state
+    return <div className="form-group">
+      <label htmlFor="oversTarget">Target run rate:</label>
+      <input
+        type="number"
+        value={targetRunRate || ""}
+        onChange={e => {
+          this.setState({
+            targetRunRate: (e.currentTarget.value || '').toString(),
+          })
+        }}
+        className="form-control"
+        id="oversTarget"
+        aria-describedby="oversTargetHelp"
+      />
+      <small id="oversTargetHelp" className="form-text text-muted">
+        If there has not been any previous delay, the target run rate is the first innings runs divided by the first innings target overs.
+        If there was a rain delay in the first innings, this will be the run rate provided by this application.
+      </small>
+    </div>
   }
 
   renderAbandon = () => {
@@ -339,6 +368,9 @@ class App extends React.PureComponent<Props, State> {
   }
 
   renderSecond = () => {
+    const targetOversHelpMsg = `Enter the number of overs scheduled for second innings at the
+    start of the innings. If there was no delay before the start of the
+      innings, this should be {config.startingOvers} overs`
     return (
       <div className="card">
         <div className="card-header">
@@ -346,7 +378,9 @@ class App extends React.PureComponent<Props, State> {
         </div>
         <div className="card-body">
           <form>
-            {this.renderTimeLost()}
+            {this.renderTimeLost('If time was lost before the start of the match, add up to 30 minutes to account for the free time (rule 4 ii.).')}
+            {this.renderTargetOvers(targetOversHelpMsg)}
+            {this.renderTargetRunRate()}
             <button
               type="submit"
               onClick={this.calculateDelaySecondInnings}
