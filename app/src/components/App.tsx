@@ -4,6 +4,7 @@ import {
   matchStartLate,
   Response as RecalcResponse,
   config,
+  secondInningsTimeLost,
 } from '../lib/calc'
 import Response from './Response'
 
@@ -21,6 +22,7 @@ interface State {
   oversTarget: number | null
   abandonMessage: string | null
   errorMessage: string | null
+  targetRunRate: number | null
 }
 
 class App extends React.PureComponent<Props, State> {
@@ -36,6 +38,7 @@ class App extends React.PureComponent<Props, State> {
       oversTarget: config.startingOvers,
       abandonMessage: null,
       errorMessage: null,
+      targetRunRate: null,
     }
   }
 
@@ -70,6 +73,43 @@ class App extends React.PureComponent<Props, State> {
         this.setState({
           errorMessage: 'Ensure that you have entered a value for time lost',
           recalcResponse: null
+        })
+      }
+    } catch (err) {
+      this.setState({
+        abandonMessage: err.message,
+        errorMessage: null,
+        recalcResponse: null,
+      })
+    }
+  }
+
+  calculateDelaySecondInnings = (
+    e: React.FormEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault()
+    const {
+      timeLost,
+      targetRunRate,
+      oversTarget
+    } = this.state
+    try {
+      if (targetRunRate && oversTarget && timeLost) {
+        const recalcResult = secondInningsTimeLost(
+          timeLost,
+          oversTarget,
+          targetRunRate
+        )
+        console.log(recalcResult)
+        this.setState({
+          recalcResponse: recalcResult,
+          abandonMessage: null,
+          errorMessage: null
+        })
+      } else {
+        this.setState({
+          errorMessage: `Ensure you've entered a first innings total, overs completed, overs target and time lost`,
+          recalcResponse: null,
         })
       }
     } catch (err) {
@@ -130,27 +170,32 @@ class App extends React.PureComponent<Props, State> {
     return retVal;
   }
 
-  renderStandardFormElements = (timeLostMessage: string = '') => {
-    const { timeLost, teaTaken } = this.state
+  renderTimeLost = (timeLostMessage: string = '') => {
+    const { timeLost } = this.state
+    return <div className="form-group">
+      <label htmlFor="timeLost">Time lost (minutes):</label>
+      <input
+        type="number"
+        value={timeLost || ""}
+        onChange={e => {
+          this.setState({ timeLost: this.tidyNumber(e.currentTarget.value) })
+        }}
+        className="form-control"
+        id="timeLost"
+        aria-describedby="timeLostHelp"
+        placeholder="Time lost in minutes"
+      />
+      <small id="timeLostHelp" className="form-text text-muted">
+        {`Enter the amount of time in minutes lost. ${timeLostMessage} `}
+      </small>
+    </div>
+  }
+
+  renderTeaTaken = () => {
+    const { teaTaken } = this.state
     return (
       <React.Fragment>
-        <div className="form-group">
-          <label htmlFor="timeLost">Time lost (minutes):</label>
-          <input
-            type="number"
-            value={timeLost || ""}
-            onChange={e => {
-              this.setState({ timeLost: this.tidyNumber(e.currentTarget.value) })
-            }}
-            className="form-control"
-            id="timeLost"
-            aria-describedby="timeLostHelp"
-            placeholder="Time lost in minutes"
-          />
-          <small id="timeLostHelp" className="form-text text-muted">
-            {`Enter the amount of time in minutes lost. ${timeLostMessage} `}
-          </small>
-        </div>
+        {this.renderTimeLost()}
         <div className="form-check">
           <input
             type="checkbox"
@@ -176,7 +221,8 @@ class App extends React.PureComponent<Props, State> {
         </div>
         <div className="card-body">
           <form>
-            {this.renderStandardFormElements()}
+            {this.renderTimeLost()}
+            {this.renderTeaTaken()}
             <button
               type="submit"
               onClick={this.calculateDelayBeforeMatchStart}
@@ -263,7 +309,8 @@ class App extends React.PureComponent<Props, State> {
                 game, this should be {config.startingOvers} overs
               </small>
             </div>
-            {this.renderStandardFormElements('If time was lost before the start of the match, add up to 30 minutes to account for the free time (rule 4 ii.).')}
+            {this.renderTimeLost('If time was lost before the start of the match, add up to 30 minutes to account for the free time (rule 4 ii.).')}
+            {this.renderTeaTaken()}
             <button
               type="submit"
               onClick={this.calculateDelayDuringFirstInnings}
@@ -298,14 +345,16 @@ class App extends React.PureComponent<Props, State> {
           <h3>Delay during second innings</h3>
         </div>
         <div className="card-body">
-          <p>
-            There is a {config.freeTime} minutes buffer available before any
-            change in playing conditions in the match.
-          </p>
-          <p>
-            Once that time has been lost, any further delays in the second
-            innings must result in the match being ABANDONED
-          </p>
+          <form>
+            {this.renderTimeLost()}
+            <button
+              type="submit"
+              onClick={this.calculateDelaySecondInnings}
+              className="btn btn-primary"
+            >
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     )
