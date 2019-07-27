@@ -195,7 +195,6 @@ class App extends React.PureComponent<Props, State> {
     const { teaTaken } = this.state
     return (
       <React.Fragment>
-        {this.renderTimeLost()}
         <div className="form-check">
           <input
             type="checkbox"
