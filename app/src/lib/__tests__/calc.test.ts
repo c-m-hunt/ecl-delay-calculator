@@ -5,24 +5,28 @@ describe('Rain rules', () => {
     describe('time lost before the start', () => {
       it('calculates new match conditions after delayed start', () => {
         expect(matchStartLate(50)).toEqual({
+          breakType: 0,
           overs: 42,
           maxPerBowler: 8,
           powerPlay: 12,
         })
 
         expect(matchStartLate(150)).toEqual({
+          breakType: 0,
           overs: 30,
           maxPerBowler: 6,
           powerPlay: 9,
         })
 
         expect(matchStartLate(150, true)).toEqual({
+          breakType: 0,
           overs: 32,
           maxPerBowler: 6,
           powerPlay: 9,
         })
 
         expect(matchStartLate(20)).toEqual({
+          breakType: 0,
           overs: 45,
           maxPerBowler: 9,
           powerPlay: 12,
@@ -39,6 +43,7 @@ describe('Rain rules', () => {
     describe('time lost during first innings', () => {
       it('calculates new total after first innings rain break', () => {
         expect(firstInningsTimeLost(203, 41.1, 135, true, 45)).toEqual({
+          breakType: 1,
           target: 151,
           overs: 26,
           maxPerBowler: 5,
@@ -48,6 +53,7 @@ describe('Rain rules', () => {
         })
 
         expect(firstInningsTimeLost(213, 45, 135, true, 45)).toEqual({
+          breakType: 1,
           target: 145,
           overs: 23,
           maxPerBowler: 4,
@@ -59,6 +65,7 @@ describe('Rain rules', () => {
 
       it('returns correct values if not enough time has been lost', () => {
         expect(firstInningsTimeLost(203, 41.1, 39, true, 45)).toEqual({
+          breakType: 1,
           target: 204,
           overs: 45,
           maxPerBowler: 9,
@@ -67,6 +74,7 @@ describe('Rain rules', () => {
           targetExact: true
         })
         expect(firstInningsTimeLost(203, 41.1, 21, false, 45)).toEqual({
+          breakType: 1,
           target: 204,
           overs: 45,
           maxPerBowler: 9,
@@ -86,6 +94,7 @@ describe('Rain rules', () => {
     describe('time lost during the 2nd innings', () => {
       it('calculates target when delay in 2nd innings', () => {
         expect(secondInningsTimeLost(43, 45, 3.4)).toEqual({
+          breakType: 2,
           target: 140,
           overs: 41,
           maxPerBowler: 8,
@@ -95,6 +104,7 @@ describe('Rain rules', () => {
         })
 
         expect(secondInningsTimeLost(120, 45, 5.0)).toEqual({
+          breakType: 2,
           target: 111,
           overs: 22,
           maxPerBowler: 4,
@@ -104,6 +114,7 @@ describe('Rain rules', () => {
         })
 
         expect(secondInningsTimeLost(120, 45, 5.01)).toEqual({
+          breakType: 2,
           target: 111,
           overs: 22,
           maxPerBowler: 4,
